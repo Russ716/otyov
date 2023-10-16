@@ -1,8 +1,11 @@
 # OTYOV - Choose Your Own Adventure Game
 
-![OTYOV Banner](banner.png)
+# Thousand Year Old Vampire
+# A game by Tim Hutchings
 
-OTYOV (One Thousand Year Old Vampire) is a text-based choose-your-own-adventure game that explores the life and choices of a vampire character over centuries. This project is implemented in HTML, JavaScript, and uses a modular system for defining prompts and choices.
+Thousand Year Old Vampire is a lonely solo role-playing game in which you chronicle the unlife of a vampire over the many centuries of their existence, beginning with the loss of mortality and ending with their inevitable destruction. This vampire will surprise you as they do things that are unexpected, unpleasant, and sometimes tragic. Making gut-churning decisions, performing irreconcilable acts, and resolving difficult narrative threads are what this game is about as you explore the vampire’s human failings, villainous acts, and surprising victories. 
+
+Electronic version in progress by me. I claim no license, authorship, or other commercial qualities. This game seemed like a neat thing to cobble some code together for and automate some processes, teaching myself some UI aspects at the same time. 
 
 ## Table of Contents
 
@@ -42,10 +45,11 @@ git clone https://github.com/yourusername/otyov.git
 
 ## How to Play
 
-1. Open the `index.html` file in your web browser.
-2. The game will start with an initial prompt.
-3. Click the "Roll Dice" button to make choices based on the random dice rolls.
-4. The story will progress, and your choices will determine the outcome.
+1. Open the `Rules.txt` file.
+2. Run `1000yoV.html`.
+3. The game will start with an initial prompt.
+4. Click the "Roll Dice" button to make choices based on the random dice rolls.
+5. The story will progress, and your choices will determine the outcome.
 
 ## Customization
 
@@ -69,14 +73,4 @@ const prompts = [
 
 You can add more prompts and choices to expand the game's storyline or modify existing ones to suit your narrative.
 
-## Contributing
-
-Contributions are welcome! If you'd like to enhance the game or fix any issues, please fork the repository and create a pull request with your changes.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-Enjoy playing OTYOV and exploring the life of a vampire character across the centuries! If you have any questions or feedback, feel free to [contact the project maintainer](mailto:youremail@example.com).
+Enjoy playing OTYOV and exploring the life of a vampire character across the centuries! 
