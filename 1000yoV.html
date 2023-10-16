@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script type="module" src="prompts.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>otyov</title>
+    <style>
+      /* Basic CSS for styling */
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .prompt {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .dice-result {
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>OTYOV</h1>
+      <div class="prompt" id="prompt">
+        Current Prompt: -
+        <p>-</p>
+      </div>
+      <div id="visitedPrompts" class="prompt-history">
+        <!-- This is where the prompt history will be displayed -->
+      </div>
+      <!-- <div class="dice-result" id="diceResult">d10 - d6 = -</div> -->
+      <div class="dice-result" id="diceResult">
+        d10: <span id="d10Value">-</span> - d6: <span id="d6Value">-</span> =
+        <span id="diffValue">-</span>
+      </div>
+      <button id="rollDiceButton">Roll Dice</button>
+    </div>
+
+    <script type="module">
+      import { prompts } from "./prompts.js";
+
+      // Get references to the HTML elements you want to update
+      const promptElement = document.getElementById("prompt");
+      const promptTextElement = promptElement.querySelector("p");
+
+      // Define the initial prompt ID you want to display
+      const initialPromptId = "1";
+      const initialLetter = "a";
+      // Create an array to store visited prompts
+      const visitedPrompts = [];
+
+      // Initialize the currentID variable with the initial prompt ID
+      let currentID = initialPromptId;
+      let currentLetter = initialLetter;
+
+      // Get references to the HTML elements for dice results
+      const d10ValueElement = document.getElementById("d10Value");
+      const d6ValueElement = document.getElementById("d6Value");
+      const diffValueElement = document.getElementById("diffValue");
+
+      // Function to roll a n-sided dice
+      function rollDice(sides) {
+        return Math.floor(Math.random() * sides) + 1;
+      }
+
+      // Event listener for the "Roll Dice" button
+      document
+        .getElementById("rollDiceButton")
+        .addEventListener("click", function () {
+          // Roll a d10 and a d6
+          const d10Result = rollDice(10);
+          const d6Result = rollDice(6);
+
+          // Calculate the difference
+          const difference = parseInt(d10Result) - parseInt(d6Result);
+
+          // Display the results on the screen
+          d10ValueElement.textContent = d10Result;
+          d6ValueElement.textContent = d6Result;
+          diffValueElement.textContent = difference;
+
+          // Calculate the new ID by adding the difference
+          let newID = parseInt(currentID) + difference;
+
+          // Ensure currentID doesn't go below 1
+          if (newID < 1) {
+            newID = 1;
+          }
+
+          // Extract the letter from the currentID and append it to the visited prompts
+          const currentPromptLabel = `${currentID}${currentLetter}`;
+
+          if (!visitedPrompts.includes(currentPromptLabel)) {
+            visitedPrompts.push(currentPromptLabel);
+          }
+
+          // Convert the newID back to a string for fetching the prompt
+          const newIDString = newID.toString();
+
+          // Extract the letter from the newIDString
+          const newLetter = currentLetter;
+
+          // Find the corresponding prompt object from the prompts array
+          const updatedPrompt = prompts.find(
+            (prompt) => prompt.id === newIDString
+          );
+
+          // Check if the prompt is found
+          if (updatedPrompt) {
+            // Update the prompt text
+            promptTextElement.textContent = updatedPrompt.a;
+            currentID = newIDString; // Update currentID to the new valid ID
+            const newPromptLabel = `${newIDString}${newLetter}`;
+
+            if (!visitedPrompts.includes(newPromptLabel)) {
+              visitedPrompts.push(newPromptLabel);
+            }
+
+            // Update the prompt history
+            document.getElementById("visitedPrompts").textContent =
+              visitedPrompts.join(", ");
+          } else {
+            // Handle the case where the prompt with the specified ID is not found
+            console.error("Prompt not found for ID: " + currentID);
+          }
+        });
+
+      // ...
+
+      // Automatically load the initial prompt 1a at page load
+      const initialPrompt = prompts.find(
+        (prompt) => prompt.id === initialPromptId
+      );
+      if (initialPrompt) {
+        promptTextElement.textContent = initialPrompt.a;
+        currentID = initialPromptId;
+      } else {
+        console.error("Initial prompt not found for ID: " + initialPromptId);
+      }
+    </script>
+  </body>
+</html>
