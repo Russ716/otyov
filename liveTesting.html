@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <link rel="stylesheet" type="text/css" href="Otyov.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTYOV</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>One Thousand Year Old Vampire</h1>
+      <div class="prompt" id="prompt">
+        <p>-</p>
+      </div>
+      Prompt history:
+      <div id="visitedPrompts" class="prompt-history">
+        <!-- This is where the prompt history will be displayed -->
+      </div>
+      <!-- <div class="dice-result" id="diceResult">d10 - d6 = -</div> -->
+      Current Roll: d10 - d6 = X
+      <div class="dice-result" id="diceResult">
+        <span id="d10Value">-</span> - <span id="d6Value">-</span> =
+        <span id="diffValue">-</span>
+      </div>
+      <button id="rollDiceButton">Next Prompt</button>
+      <script type="module">
+        import { prompts } from "./promptsJS.js";
+        document.addEventListener("DOMContentLoaded", function () {
+          const promptElement = document.getElementById("prompt");
+          const promptTextElement = promptElement.querySelector("p");
+          const initialPromptId = 1;
+          const initialLetter = "a";
+          const promptStates = {};
+          const visitedPrompts = ["1a"];
+
+          let currentID = initialPromptId;
+          let currentLetter = initialLetter;
+
+          const d10ValueElement = document.getElementById("d10Value");
+          const d6ValueElement = document.getElementById("d6Value");
+          const diffValueElement = document.getElementById("diffValue");
+
+          function rollDice(sides) {
+            return Math.floor(Math.random() * sides) + 1;
+          }
+
+          document
+            .getElementById("rollDiceButton")
+            .addEventListener("click", function () {
+              const d10Result = rollDice(1);
+              const d6Result = rollDice(6);
+              const difference = d10Result - d6Result;
+
+              d10ValueElement.textContent = d10Result;
+              d6ValueElement.textContent = d6Result;
+              diffValueElement.textContent = difference;
+
+              let newID = currentID + difference;
+              newID = Math.max(1, newID);
+
+              const { nextLetter, nextID } = getNextLetter(
+                currentLetter,
+                newID,
+                visitedPrompts
+              );
+
+              const currentPromptLabel = `${newID}${currentLetter}`;
+              const nextPromptLabel = `${nextID}${nextLetter}`;
+
+              if (!visitedPrompts.includes(currentPromptLabel)) {
+                visitedPrompts.push(currentPromptLabel);
+
+                while (
+                  visitedPrompts.filter((p) => p === currentPromptLabel)
+                    .length < 3 &&
+                  newID >= 1
+                ) {
+                  const updatedPrompt = prompts.find(
+                    (prompt) => prompt.id === newID
+                  );
+
+                  if (updatedPrompt) {
+                    promptTextElement.textContent =
+                      updatedPrompt[currentLetter];
+                    currentID = newID;
+                    currentLetter = nextLetter;
+
+                    document.getElementById("visitedPrompts").textContent =
+                      visitedPrompts.join(", ");
+                  } else {
+                    console.error("Prompt not found for ID: " + currentID);
+                    break;
+                  }
+                }
+              } else {
+                console.error("Repeated prompt: " + currentPromptLabel);
+                getNextLetter(currentLetter, newID, visitedPrompts);
+              }
+            });
+
+          const initialPrompt = prompts.find(
+            (prompt) => prompt.id === initialPromptId
+          );
+          if (initialPrompt) {
+            promptTextElement.textContent = initialPrompt[initialLetter];
+          } else {
+            console.error(
+              "Initial prompt not found for ID: " + initialPromptId
+            );
+          }
+
+          function getNextLetter(currentLetter, newID, visitedPrompts) {
+            let nextLetter = currentLetter;
+            let nextID = newID;
+
+            while (visitedPrompts.includes(`${nextID}${nextLetter}`)) {
+              if (nextLetter === "c") {
+                nextID += 1;
+                nextLetter = "a";
+                getNextLetter(nextLetter, nextID, visitedPrompts);
+              } else {
+                nextLetter = String.fromCharCode(nextLetter.charCodeAt(0) + 1);
+              }
+            }
+            return { nextLetter, nextID };
+          }
+        });
+
+        // document.addEventListener("DOMContentLoaded", function () {
+        //   // Your JavaScript code here
+
+        //   // Get references to the HTML elements you want to update
+        //   const promptElement = document.getElementById("prompt");
+        //   const promptTextElement = promptElement.querySelector("p");
+        //   // ^ Jumps to the HTML class propmt and then to the p tag (line 13)
+        //   // Define the initial prompt ID you want to display
+        //   const initialPromptId = 1;
+        //   const initialLetter = "a";
+
+        //   // Create an object to store the states of each prompt ID
+        //   const promptStates = {};
+
+        //   // Create an array to store visited prompts
+        //   const visitedPrompts = ["1a"];
+
+        //   // Initialize the currentID variable with the initial prompt ID
+        //   let startingID = 1;
+        //   let currentID = startingID;
+        //   let startingLetter = "a";
+        //   let currentLetter = startingLetter;
+
+        //   // Get references to the HTML elements for dice results
+        //   const d10ValueElement = document.getElementById("d10Value");
+        //   const d6ValueElement = document.getElementById("d6Value");
+        //   const diffValueElement = document.getElementById("diffValue");
+
+        //   // Function to roll a n-sided dice
+        //   function rollDice(sides) {
+        //     return Math.floor(Math.random() * sides) + 1;
+        //   } // ^ Returns a random number between 1 and sides.
+
+        //   // Event listener for the "Roll Dice" button
+        //   document
+        //     .getElementById("rollDiceButton")
+        //     .addEventListener("click", function () {
+        //       // Roll a d10 and a d6
+        //       const d10Result = rollDice(1); // Change to 10-sided dice
+        //       const d6Result = rollDice(6);
+        //       // Calculate the difference
+        //       const difference = d10Result - d6Result;
+        //       // Display the results on the screen
+        //       d10ValueElement.textContent = d10Result;
+        //       d6ValueElement.textContent = d6Result;
+        //       diffValueElement.textContent = difference;
+
+        //       let newID = currentID + difference;
+        //       // Ensure the new ID is at least 1
+        //       newID = Math.max(1, newID);
+
+        //       // Use the new getNextLetter function
+
+        //       const { nextLetter, nextID } = getNextLetter(
+        //         currentLetter,
+        //         newID,
+        //         visitedPrompts
+        //       );
+        //       if (difference !== 0) {
+        //         newID = nextID + difference;
+        //       }
+
+        //       const currentPromptLabel = `${newID}${currentLetter}`;
+        //       visitedPrompts.push(currentPromptLabel);
+
+        //       const updatedPrompt = prompts.find(
+        //         (prompt) => prompt.id === newID
+        //       );
+
+        //       // Check if the prompt is found
+        //       if (updatedPrompt) {
+        //         // Update the prompt text, including the current letter
+        //         promptTextElement.textContent = updatedPrompt[currentLetter];
+        //         currentID = newID; // Update currentID to the new valid ID
+        //         const newPromptLabel = `${newID}${currentLetter}`;
+
+        //         if (visitedPrompts.includes(newPromptLabel)) {
+        //           currentLetter = getNextLetter(
+        //             currentLetter,
+        //             newID,
+        //             visitedPrompts
+        //           ).nextLetter;
+        //         } else {
+        //           visitedPrompts.push(newPromptLabel);
+        //         }
+        //         // Update the prompt history
+        //         document.getElementById("visitedPrompts").textContent =
+        //           visitedPrompts.join(", ");
+        //       } else {
+        //         // Handle the case where the prompt with the specified ID is not found
+        //         console.error("Prompt not found for ID: " + currentID);
+        //       }
+
+        //       // Update the state of the current prompt
+        //       const currentPromptState = promptStates[currentID];
+        //       if (currentPromptState === "A") {
+        //         promptStates[currentID] = "B";
+        //       } else if (currentPromptState === "B") {
+        //         promptStates[currentID] = "C";
+        //       } else if (currentPromptState === "C") {
+        //         promptStates[currentID] = "D";
+        //       }
+
+        //       // Check if the current prompt is in 'D' state
+        //       if (currentPromptState === "D") {
+        //         // Get the state of the next prompt (current + 1)
+        //         const nextState = promptStates[currentID + 1];
+
+        //         // Perform an action based on the state of the next prompt
+        //         if (nextState === "A") {
+        //           // Do something when the next prompt is in 'A' state
+        //         } else if (nextState === "B") {
+        //           // Do something when the next prompt is in 'B' state
+        //         } else if (nextState === "C") {
+        //           // Do something when the next prompt is in 'C' state
+        //         }
+        //       }
+        //     });
+        //   // Automatically load the initial prompt 1a at page load
+        //   const initialPrompt = prompts.find((prompt) => prompt.id === 1);
+        //   if (initialPrompt) {
+        //     promptTextElement.textContent = initialPrompt.a;
+        //     currentID = initialPromptId;
+        //   } else {
+        //     console.error(
+        //       "Initial prompt not found for ID: " + initialPromptId
+        //     );
+        //   }
+        // Get references to the input field and skills list
+        const skillInput = document.getElementById("skillInput");
+        const skillsList = document.getElementById("skillsList");
+        const resourceInput = document.getElementById("resourceInput");
+        const resourcesList = document.getElementById("resourcesList");
+        const memoryInput = document.getElementById("memoryInput");
+        const memoryList = document.getElementById("memoryList");
+        const addMemoryButton = document.getElementById("addMemoryButton");
+        const characterInput = document.getElementById("characterInput");
+        const characterList = document.getElementById("characterList");
+        const addCharacterButton =
+          document.getElementById("addCharacterButton");
+        const markInput = document.getElementById("markInput");
+        const markList = document.getElementById("markList");
+        const addMarkButton = document.getElementById("addMarkButton");
+
+        // Event listener for when the user presses Enter in the input field
+        skillInput.addEventListener("keyup", function (event) {
+          if (event.key === "Enter") {
+            addSkill(skillInput.value);
+            skillInput.value = ""; // Clear the input field after adding the skill
+          }
+        });
+        // Event listener for when the user presses Enter in the input field
+        resourceInput.addEventListener("keyup", function (event) {
+          if (event.key === "Enter") {
+            addResource(resourceInput.value);
+            resourceInput.value = ""; // Clear the input field after adding the resource
+          }
+        });
+        function addResource(resourceText) {
+          const resourceItem = document.createElement("li");
+          resourceItem.appendChild(document.createTextNode(resourceText));
+          resourcesList.appendChild(resourceItem);
+        }
+        // Function to add a skill to the list with a checkbox and disable button
+        function addSkill(skillText) {
+          const skillItem = document.createElement("li");
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.id = `checkbox${skillText}`;
+
+          // Button to disable the skill
+          const disableButton = document.createElement("button");
+          disableButton.textContent = "Disable";
+          disableButton.addEventListener("click", function () {
+            toggleSkillDisabled(skillItem);
+          });
+
+          skillItem.appendChild(checkbox);
+          skillItem.appendChild(document.createTextNode(skillText));
+          skillItem.appendChild(disableButton);
+
+          skillsList.appendChild(skillItem);
+        }
+
+        // Function to toggle the strikethrough style on a skill item
+        function toggleSkillDisabled(skillItem) {
+          if (skillItem.style.textDecoration === "line-through") {
+            skillItem.style.textDecoration = "none"; // Remove strikethrough
+          } else {
+            skillItem.style.textDecoration = "line-through"; // Add strikethrough
+          }
+        }
+        // Event listener to delete a memory
+        document.addEventListener("click", function (event) {
+          if (event.target.classList.contains("delete-memory-button")) {
+            const memoryNumber = event.target.getAttribute("data-memory");
+            const memoryElement = document.getElementById(
+              `experienceList${memoryNumber}`
+            );
+            memoryElement.remove();
+          }
+        });
+
+        // Event listener to delete an experience within a memory
+        document.addEventListener("click", function (event) {
+          if (event.target.classList.contains("delete-experience-button")) {
+            const memoryNumber = event.target.getAttribute("data-memory");
+            const experienceNumber =
+              event.target.getAttribute("data-experience");
+            const experienceInput = document.getElementById(
+              `memoriesInput${memoryNumber}`
+            );
+            const experiences = experienceInput.value.split("\n");
+            experiences.splice(experienceNumber - 1, 1); // Remove the experience
+            experienceInput.value = experiences.join("\n");
+          }
+        });
+
+        // Event listener for adding a character
+        addCharacterButton.addEventListener("click", function () {
+          addCharacter(characterInput.value);
+          characterInput.value = ""; // Clear the input field after adding the character
+        });
+
+        // Event listener for adding a mark
+        addMarkButton.addEventListener("click", function () {
+          addMark(markInput.value);
+          markInput.value = ""; // Clear the input field after adding the mark
+        });
+        // Assuming you have similar input fields and buttons for memories, like "memoriesInput1", "memoriesInput2", etc.
+        // Add an event listener to all memory input fields
+        for (let memoryNumber = 1; memoryNumber <= 5; memoryNumber++) {
+          const memoryInput = document.getElementById(
+            `memoriesInput${memoryNumber}`
+          );
+          memoryInput.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+              const memoryText = memoryInput.value;
+              addMemoryToMemoryList(memoryText, memoryNumber);
+              memoryInput.value = ""; // Clear the input field after adding the memory
+            }
+          });
+        }
+        // Function to add a memory to the list with a delete button
+        function addMemoryToMemoryList(memoryText, memoryNumber) {
+          const memoryList = document.getElementById(
+            `experienceList${memoryNumber}`
+          );
+          const memoryItem = document.createElement("li");
+          memoryItem.appendChild(document.createTextNode(memoryText));
+
+          // Button to delete the memory
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete Experience";
+          deleteButton.classList.add("delete-experience-button");
+          deleteButton.setAttribute("data-memory", memoryNumber);
+          deleteButton.addEventListener("click", function () {
+            deleteExperience(memoryItem);
+          });
+
+          memoryItem.appendChild(deleteButton);
+          memoryList.appendChild(memoryItem);
+        }
+
+        function deleteExperience(experienceItem) {
+          // Remove the experience line
+          experienceItem.remove();
+        }
+        // Function to add a character to the list with a disable button
+        function addCharacter(characterText) {
+          const characterItem = document.createElement("li");
+          characterItem.appendChild(document.createTextNode(characterText));
+
+          // Button to toggle the character's disabled style
+          const disableCharacterButton = document.createElement("button");
+          disableCharacterButton.textContent = "Disable Character";
+          disableCharacterButton.addEventListener("click", function () {
+            toggleCharacterDisabled(characterItem);
+          });
+
+          characterItem.appendChild(disableCharacterButton);
+          characterList.appendChild(characterItem);
+        }
+
+        // Function to toggle the strikethrough style on a character item
+        function toggleCharacterDisabled(characterItem) {
+          if (characterItem.style.textDecoration === "line-through") {
+            characterItem.style.textDecoration = "none"; // Remove strikethrough
+          } else {
+            characterItem.style.textDecoration = "line-through"; // Add strikethrough
+          }
+        }
+
+        // Function to add a mark to the list with a delete button
+        function addMark(markText) {
+          const markItem = document.createElement("li");
+          markItem.appendChild(document.createTextNode(markText));
+
+          // Button to delete the mark
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete Mark";
+          deleteButton.addEventListener("click", function () {
+            deleteMark(markItem);
+          });
+
+          markItem.appendChild(deleteButton);
+          markList.appendChild(markItem);
+        }
+
+        // Function to delete a mark
+        function deleteMark(markItem) {
+          markItem.remove();
+        }
+        // // Helper function to get the next letter (a, b, c)
+        // function getNextLetter(currentLetter, newID, visitedPrompts) {
+        //   let nextLetter = currentLetter;
+        //   let nextID = newID;
+
+        //   while (visitedPrompts.includes(`${nextID}${nextLetter}`)) {
+        //     // Increment the ID and reset the letter to 'a' if 'c' is reached
+        //     if (nextLetter === "c") {
+        //       nextID += 1;
+        //       nextLetter = "a";
+        //     } else {
+        //       // Move to the next letter in the sequence (a -> b -> c)
+        //       nextLetter = String.fromCharCode(nextLetter.charCodeAt(0) + 1);
+        //     }
+        //   }
+
+        //   return { nextLetter, nextID };
+        // }
+      </script>
+      <div>
+        <!-- Text input field for entering skills -->
+        <input type="text" id="skillInput" placeholder="Enter a skill" />
+      </div>
+
+      <div>
+        <input type="text" id="resourceInput" placeholder="Enter a resource" />
+      </div>
+      <div>
+        <input
+          type="text"
+          id="charactersInput"
+          placeholder="Enter a character"
+        />
+      </div>
+      <div>
+        <input type="text" id="marksInput" placeholder="Enter a mark" />
+      </div>
+      <div>
+        <!-- List to store skills with checkboxes -->
+        <ul id="skillsList" class="skills-list">
+          Skills:
+        </ul>
+        <ul id="memoriesList" class="category-list">
+          Memories:
+          <button id="addMemoryButton">Add Memory</button>
+        </ul>
+        <ul id="experienceList1" class="category-list experience-list">
+          Memory 1:
+          <button class="delete-memory-button" data-memory="1">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput1"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="1"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+        <ul id="experienceList2" class="category-list experience-list">
+          Memory 2:
+          <button class="delete-memory-button" data-memory="2">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput2"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="2"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+
+        <ul id="experienceList3" class="category-list experience-list">
+          Memory 3:
+          <button class="delete-memory-button" data-memory="3">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput3"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="3"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+        <ul id="experienceList4" class="category-list experience-list">
+          Memory 4:
+          <button class="delete-memory-button" data-memory="4">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput4"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="4"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+        <ul id="experienceList5" class="category-list experience-list">
+          Memory 5:
+          <button class="delete-memory-button" data-memory="5">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput5"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="5"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+
+        <ul id="resourcesList" class="category-list">
+          Resources:
+        </ul>
+        <ul id="charactersList" class="category-list">
+          Characters:
+        </ul>
+        <div>
+          <input
+            type="text"
+            id="characterInput"
+            placeholder="Enter a character:"
+          />
+          <button id="addCharacterButton">Add Character</button>
+        </div>
+        <ul id="characterList" class="category-list">
+          <!-- This is where characters will be displayed -->
+        </ul>
+
+        <ul id="marksList" class="category-list">
+          Marks:
+        </ul>
+        <div>
+          <input type="text" id="markInput" placeholder="Enter a mark:" />
+          <button id="addMarkButton">Add Mark</button>
+        </div>
+        <ul id="markList" class="category-list">
+          <!-- This is where marks will be displayed -->
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

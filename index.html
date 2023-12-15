@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script type="module" src="main.js"></script>
+    <link
+      href="https://fonts.cdnfonts.com/css/vampire-calligraphy"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" type="text/css" href="Otyov.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTYOV</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>One Thousand Year Old Vampire</h1>
+      <div class="prompt" id="prompt">
+        <p>-</p>
+      </div>
+      Prompt history:
+      <div id="visitedPrompts" class="prompt-history">
+        <!-- This is where the prompt history will be displayed -->
+      </div>
+      <!-- <div class="dice-result" id="diceResult">d10 - d6 = -</div> -->
+      Current Roll: d10 - d6 = X
+      <div class="dice-result" id="diceResult">
+        <span id="d10Value">-</span> - <span id="d6Value">-</span> =
+        <span id="diffValue">-</span>
+      </div>
+      <button id="rollDiceButton">Next Prompt</button>
+      <div>
+        <!-- Text input field for entering skills -->
+        <input type="text" id="skillInput" placeholder="Enter a skill" />
+      </div>
+
+      <div>
+        <input type="text" id="resourceInput" placeholder="Enter a resource" />
+      </div>
+      <div>
+        <input
+          type="text"
+          id="charactersInput"
+          placeholder="Enter a character"
+        />
+      </div>
+      <div>
+        <input type="text" id="marksInput" placeholder="Enter a mark" />
+      </div>
+      <div>
+        <!-- List to store skills with checkboxes -->
+        <ul id="skillsList" class="skills-list">
+          Skills:
+        </ul>
+        <ul id="memoriesList" class="category-list">
+          Memories:
+          <button id="addMemoryButton">Add Memory</button>
+        </ul>
+        <ul id="experienceList1" class="category-list experience-list">
+          Memory 1:
+          <button class="delete-memory-button" data-memory="1">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput1"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="1"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+        <ul id="experienceList2" class="category-list experience-list">
+          Memory 2:
+          <button class="delete-memory-button" data-memory="2">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput2"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="2"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+
+        <ul id="experienceList3" class="category-list experience-list">
+          Memory 3:
+          <button class="delete-memory-button" data-memory="3">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput3"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="3"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+        <ul id="experienceList4" class="category-list experience-list">
+          Memory 4:
+          <button class="delete-memory-button" data-memory="4">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput4"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="4"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+        <ul id="experienceList5" class="category-list experience-list">
+          Memory 5:
+          <button class="delete-memory-button" data-memory="5">
+            Delete Memory
+          </button>
+          <div>
+            <input
+              type="text"
+              id="memoriesInput5"
+              placeholder="Enter an experience:"
+            />
+            <button
+              class="delete-experience-button"
+              data-memory="5"
+              data-experience="1"
+            >
+              Delete Experience
+            </button>
+          </div>
+        </ul>
+
+        <ul id="resourcesList" class="category-list">
+          Resources:
+        </ul>
+        <ul id="charactersList" class="category-list">
+          Characters:
+        </ul>
+        <div>
+          <input
+            type="text"
+            id="characterInput"
+            placeholder="Enter a character:"
+          />
+          <button id="addCharacterButton">Add Character</button>
+        </div>
+        <ul id="characterList" class="category-list">
+          <!-- This is where characters will be displayed -->
+        </ul>
+
+        <ul id="marksList" class="category-list">
+          Marks:
+        </ul>
+        <div>
+          <input type="text" id="markInput" placeholder="Enter a mark:" />
+          <button id="addMarkButton">Add Mark</button>
+        </div>
+        <ul id="markList" class="category-list">
+          <!-- This is where marks will be displayed -->
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

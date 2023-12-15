@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <script type="module" src="prompts.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>otyov</title>
+    <title>OTYOV</title>
     <style>
       /* Basic CSS for styling */
+      @import url("https://fonts.cdnfonts.com/css/vampire-calligraphy");
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Vampire Calligraphy", sans-serif;
       }
       .container {
         max-width: 600px;
@@ -33,20 +34,21 @@
   </head>
   <body>
     <div class="container">
-      <h1>OTYOV</h1>
+      <h1>One Thousand Year Old Vampire</h1>
       <div class="prompt" id="prompt">
-        Current Prompt: -
         <p>-</p>
       </div>
+      Prompt history:
       <div id="visitedPrompts" class="prompt-history">
         <!-- This is where the prompt history will be displayed -->
       </div>
       <!-- <div class="dice-result" id="diceResult">d10 - d6 = -</div> -->
+      Current Roll: d10 - d6 = X
       <div class="dice-result" id="diceResult">
-        d10: <span id="d10Value">-</span> - d6: <span id="d6Value">-</span> =
+        <span id="d10Value">-</span> - <span id="d6Value">-</span> =
         <span id="diffValue">-</span>
       </div>
-      <button id="rollDiceButton">Roll Dice</button>
+      <button id="rollDiceButton">Next Prompt</button>
     </div>
 
     <script type="module">
@@ -102,9 +104,11 @@
 
           // Extract the letter from the currentID and append it to the visited prompts
           const currentPromptLabel = `${currentID}${currentLetter}`;
-
           if (!visitedPrompts.includes(currentPromptLabel)) {
             visitedPrompts.push(currentPromptLabel);
+          } else {
+            // User has returned to a prompt, change the current letter
+            currentLetter = getNextLetter(currentLetter);
           }
 
           // Convert the newID back to a string for fetching the prompt
@@ -120,8 +124,8 @@
 
           // Check if the prompt is found
           if (updatedPrompt) {
-            // Update the prompt text
-            promptTextElement.textContent = updatedPrompt.a;
+            // Update the prompt text, including the current letter
+            promptTextElement.textContent = `${updatedPrompt[newLetter]}`;
             currentID = newIDString; // Update currentID to the new valid ID
             const newPromptLabel = `${newIDString}${newLetter}`;
 
@@ -138,7 +142,12 @@
           }
         });
 
-      // ...
+      // Helper function to get the next letter (a, b, c)
+      function getNextLetter(currentLetter) {
+        if (currentLetter === "a") return "b";
+        if (currentLetter === "b") return "c";
+        return "a"; // If currentLetter is "c", loop back to "a"
+      }
 
       // Automatically load the initial prompt 1a at page load
       const initialPrompt = prompts.find(
